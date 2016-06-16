@@ -69,7 +69,7 @@
 -export([verify_scope/2]).
 
 %% API
--export([split_action_scope/1]).
+-export([explode/1, implode/2]).
 
 -ifdef(TEST).
 -compile(export_all).
@@ -97,6 +97,22 @@ verify_scope(RequiredFQScopes, PermittedFQScopes) ->
                 check_fqscope(RequiredFQScopes, PermittedFQScope)
             end, PermittedFQScopes).
 
+-spec explode(scope()) -> fqscopes().
+explode(FQScope) when is_binary(FQScope) ->
+  explode([FQScope]);
+explode([]) -> [];
+explode([FQScope | Rest]) ->
+  [Action | [Scope]] = binary:split(FQScope, <<".">>),
+  FQScopeExtracted = case is_method(Action) of
+    false -> {<<"all">>, FQScope};
+    true -> {Action, Scope}
+  end,
+  [FQScopeExtracted | explode(Rest)].
+
+-spec implode(action(), single_scope()) -> single_scope().
+implode(Action, Scope) ->
+  oauth2_scope_strategies:set_subpath(Action, Scope).
+
 %% Private functions
 
 -spec check_fqscope(fqscopes(), fqscope()) -> boolean().
@@ -111,18 +127,6 @@ check_fqscope(RequiredFQScopes, {PermittedAction, PermittedScope}) ->
 action_is_permitted(Action, Action) -> true;
 action_is_permitted(<<"all">>, _RequiredAction) -> true;
 action_is_permitted(_PermittedAction, _RequiredAction) -> false.
-
--spec split_action_scope(scope()) -> fqscopes().
-split_action_scope(FQScope) when is_binary(FQScope) ->
-  split_action_scope([FQScope]);
-split_action_scope([]) -> [];
-split_action_scope([FQScope | Rest]) ->
-  [Action | [Scope]] = binary:split(FQScope, <<".">>),
-  FQScopeExtracted = case is_method(Action) of
-    false -> {<<"all">>, FQScope};
-    true -> {Action, Scope}
-  end,
-  [FQScopeExtracted | split_action_scope(Rest)].
 
 -spec is_method(binary()) -> boolean().
 is_method(<<"read">>) -> true;
