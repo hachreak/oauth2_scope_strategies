@@ -69,7 +69,7 @@
 -export([verify_scope/2]).
 
 %% API
--export([explode/1, implode/2]).
+-export([explode/1, implode/1]).
 
 -ifdef(TEST).
 -compile(export_all).
@@ -109,9 +109,12 @@ explode([FQScope | Rest]) ->
   end,
   [FQScopeExtracted | explode(Rest)].
 
--spec implode(action(), single_scope()) -> single_scope().
-implode(Action, Scope) ->
-  oauth2_scope_strategies:set_subpath(Action, Scope).
+-spec implode(fqscope() | fqscopes()) -> scope().
+implode({Action, Scope}) ->
+  oauth2_scope_strategies:set_subpath(Action, Scope);
+implode([]) -> [];
+implode([{Action, Scope} | Rest]) ->
+  [implode({Action, Scope}) | implode(Rest)].
 
 %% Private functions
 

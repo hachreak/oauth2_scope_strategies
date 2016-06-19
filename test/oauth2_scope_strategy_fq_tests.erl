@@ -189,11 +189,17 @@ implode(_) ->
       ?assertEqual(
          <<"read.users.pippo.boxes">>,
          oauth2_scope_strategy_fq:implode(
-           <<"read">>, <<"users.pippo.boxes">>)),
+           {<<"read">>, <<"users.pippo.boxes">>})),
       ?assertEqual(
-         <<"read.users.pippo.boxes">>,
-         oauth2_scope_strategy_fq:implode(
-           <<"read">>, <<"users.pippo.boxes">>))
+        [<<"read.users.pippo.boxes">>],
+        oauth2_scope_strategy_fq:implode(
+          [{<<"read">>, <<"users.pippo.boxes">>}])),
+      ?assertEqual(
+        [<<"read.users.pippo.boxes">>, <<"write.users.pluto">>],
+        oauth2_scope_strategy_fq:implode(
+          [{<<"read">>, <<"users.pippo.boxes">>},
+           {<<"write">>, <<"users.pluto">>}])),
+      ?assertEqual([], oauth2_scope_strategy_fq:implode([]))
   end.
 
 %% private functions
