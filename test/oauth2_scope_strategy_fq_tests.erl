@@ -82,7 +82,7 @@ verify_scope_test(_SetupData) ->
         % but I can access only to
         [<<"read.users.test.boxes.1">>],
         % result
-        true),
+        false),
       check_scope(
         % I want to access to:
         [{<<"read">>, <<"users.test.boxes.1">>},
@@ -100,6 +100,16 @@ verify_scope_test(_SetupData) ->
          <<"read.users.test.boxes.1">>],
         % result
         false),
+      check_scope(
+        % I want to access to:
+        [{<<"read">>, <<"users.test.boxes.1">>},
+         {<<"read">>, <<"users.test.boxes.2">>}],
+        % but I can access only to
+        [<<"read.users.test.boxes.3">>,
+         <<"read.users.test.boxes.2">>,
+         <<"read.users.test.boxes.1">>],
+        % result
+        true),
       check_scope(
         % I want to access to:
         [{<<"read">>, <<"users.test.boxes.1">>}],

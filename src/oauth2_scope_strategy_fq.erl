@@ -93,9 +93,9 @@
 
 -spec verify_scope(fqscopes(), fqscopes()) -> boolean().
 verify_scope(RequiredFQScopes, PermittedFQScopes) ->
-  lists:all(fun(PermittedFQScope) ->
-                check_fqscope(RequiredFQScopes, PermittedFQScope)
-            end, PermittedFQScopes).
+  lists:all(fun(RequiredFQScope) ->
+                check_fqscope(RequiredFQScope, PermittedFQScopes)
+            end, RequiredFQScopes).
 
 -spec explode(scope()) -> fqscopes().
 explode(FQScope) when is_binary(FQScope) ->
@@ -118,13 +118,13 @@ implode([{Action, Scope} | Rest]) ->
 
 %% Private functions
 
--spec check_fqscope(fqscopes(), fqscope()) -> boolean().
-check_fqscope(RequiredFQScopes, {PermittedAction, PermittedScope}) ->
-  lists:any(fun({RequiredAction, RequiredScope}) ->
+-spec check_fqscope(fqscope(), fqscopes()) -> boolean().
+check_fqscope({RequiredAction, RequiredScope}, PermittedFQScopes) ->
+  lists:any(fun({PermittedAction, PermittedScope}) ->
       action_is_permitted(PermittedAction, RequiredAction)
       and
       oauth2_scope_strategy_simple:verify_scope(PermittedScope, RequiredScope)
-    end, RequiredFQScopes).
+    end, PermittedFQScopes).
 
 -spec action_is_permitted(action(), action()) -> boolean().
 action_is_permitted(Action, Action) -> true;
