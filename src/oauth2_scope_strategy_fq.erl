@@ -69,7 +69,7 @@
 -export([verify_scope/2]).
 
 %% API
--export([explode/1, implode/1]).
+-export([explode/1, implode/1, build/2]).
 
 -ifdef(TEST).
 -compile(export_all).
@@ -115,6 +115,9 @@ implode({Action, Scope}) ->
 implode([]) -> [];
 implode([{Action, Scope} | Rest]) ->
   [implode({Action, Scope}) | implode(Rest)].
+
+-spec build(action(), scope()) -> fqscopes().
+build(Action, Scope) -> [{Action, Scope}].
 
 %% Private functions
 
