@@ -126,7 +126,7 @@ check_fqscope({RequiredAction, RequiredScope}, PermittedFQScopes) ->
   lists:any(fun({PermittedAction, PermittedScope}) ->
       action_is_permitted(PermittedAction, RequiredAction)
       and
-      oauth2_scope_strategy_simple:verify_scope(PermittedScope, RequiredScope)
+      oauth2_scope_strategy_simple:verify_scope(RequiredScope, PermittedScope)
     end, PermittedFQScopes).
 
 -spec action_is_permitted(action(), action()) -> boolean().

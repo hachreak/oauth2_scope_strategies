@@ -35,7 +35,7 @@
 -spec verify_scope(scope(), scope()) -> boolean().
 verify_scope(_Scope1, undefined) -> true;
 verify_scope(_Scope1, []) -> true;
-verify_scope(Scope1, Scope2) ->
+verify_scope(RequiredScope, PermittedScope) ->
   oauth2_priv_set:is_subset(
-    oauth2_priv_set:new(Scope1),
-    oauth2_priv_set:new(Scope2)).
+    oauth2_priv_set:new(PermittedScope),
+    oauth2_priv_set:new(RequiredScope)).
