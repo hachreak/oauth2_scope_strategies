@@ -54,5 +54,14 @@ verify_scope(_) ->
       ?assertEqual(
          false,
          oauth2_scope_strategy_simple:verify_scope(
-           <<"users.pippo.boxes">>, <<"users.pippo.client">>))
+           <<"users.pippo.boxes">>, <<"users.pippo.client">>)),
+      ?assertEqual(
+         true,
+         oauth2_scope_strategy_simple:verify_scope(
+           <<"users.pippo.boxes">>, undefined)),
+      ?assertEqual(
+         true,
+         oauth2_scope_strategy_simple:verify_scope(
+           <<"users.pippo.boxes">>, []))
+
   end.

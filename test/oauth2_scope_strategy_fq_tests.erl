@@ -34,7 +34,8 @@ mux_test_() ->
          action_is_permitted(SetupData),
          explode(SetupData),
          is_method(SetupData),
-         implode(SetupData)
+         implode(SetupData),
+         build(SetupData)
         ]
     end
   }.
@@ -210,6 +211,13 @@ implode(_) ->
           [{<<"read">>, <<"users.pippo.boxes">>},
            {<<"write">>, <<"users.pluto">>}])),
       ?assertEqual([], oauth2_scope_strategy_fq:implode([]))
+  end.
+
+build(_) ->
+  fun() ->
+    ?assertEqual(
+       [{<<"read">>, <<"users.pippo.boxes">>}],
+       oauth2_scope_strategy_fq:build(<<"read">>, <<"users.pippo.boxes">>))
   end.
 
 %% private functions
