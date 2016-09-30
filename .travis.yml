@@ -1,0 +1,13 @@
+services:
+    - mongodb
+language: erlang
+otp_release:
+  - 18.0
+  - 18.1
+  - 18.2
+  - 18.3
+  - 19.0
+  - 19.1
+install:
+  - wget https://s3.amazonaws.com/rebar3/rebar3 -O /tmp/rebar3 && chmod +x /tmp/rebar3
+script: "PATH=$PATH:/tmp ./run-tests.sh"

@@ -1,6 +1,8 @@
 oauth2_scope_strategies
 =======================
 
+[![Build Status](https://travis-ci.org/hachreak/oauth2_scope_strategies.svg?branch=master)](https://travis-ci.org/hachreak/oauth2_scope_strategies)
+
 A compilation of scope strategies to be able to implement a `backend` for
 the `oauth2` library.
 
