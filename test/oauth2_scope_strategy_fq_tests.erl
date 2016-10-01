@@ -36,7 +36,8 @@ mux_test_() ->
          is_method(SetupData),
          implode(SetupData),
          build(SetupData),
-         reduce(SetupData)
+         reduce(SetupData),
+         verify_any(SetupData)
         ]
     end
   }.
@@ -275,6 +276,58 @@ reduce(_) ->
       ))
   end.
 
+verify_any(_) ->
+  fun() ->
+    check_scope_any(
+      % I want to access to:
+      [{<<"read">>, <<"users.test.boxes.1">>}],
+      % but I can access only to:
+      [
+      %   :false
+        [{<<"write">>, <<"users.test.boxes.1">>}],
+      %   :false
+        [{<<"read">>, <<"users.test.boxes.1.fuu">>}]
+      ],
+      % result
+      false),
+    check_scope_any(
+      % I want to access to:
+      [{<<"read">>, <<"users.test.boxes.1">>}],
+      % but I can access only to:
+      [
+      %   :false
+        [{<<"all">>, <<"users.test.boxes.2">>}],
+      %   :true
+        [{<<"all">>, <<"users.test.boxes.1">>}]
+      ],
+      % result
+      true),
+    check_scope_any(
+      % I want to access to:
+      [{<<"read">>, <<"users.test.boxes.1">>}],
+      % but I can access only to:
+      [
+      %   :true
+        [{<<"all">>, <<"users.test.boxes">>}],
+      %   :false
+        [{<<"all">>, <<"users.test2.boxes.1">>}]
+      ],
+      % result
+      true),
+    check_scope_any(
+      % I want to access to:
+      [{<<"read">>, <<"users.test.boxes.1">>}],
+      % but I can access only to:
+      [
+      %   :true
+        [{<<"all">>, <<"users.test.boxes.1">>}],
+      %   :true
+        [{<<"read">>, <<"users.test.boxes">>}]
+      ],
+      % result
+      true)
+  end.
+
 
 %% private functions
 
@@ -284,3 +337,9 @@ check_scope(RequiredScope, PermittedScope, ResultExpected) ->
      oauth2_scope_strategy_fq:verify(
        RequiredScope,
        oauth2_scope_strategy_fq:explode(PermittedScope))).
+
+check_scope_any(RequiredScope, PermittedScope, ResultExpected) ->
+  ?assertEqual(
+     ResultExpected,
+     oauth2_scope_strategy_fq:verify_any(
+       RequiredScope, PermittedScope)).

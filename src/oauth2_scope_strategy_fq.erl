@@ -64,7 +64,7 @@
 -module(oauth2_scope_strategy_fq).
 
 %% API exports
--export([verify/2, reduce/2]).
+-export([verify_any/2, verify/2, reduce/2]).
 
 %% API
 -export([explode/1, implode/1, build/2]).
@@ -88,6 +88,17 @@
 %%====================================================================
 %% API functions
 %%====================================================================
+
+% @doc Check required FQScopes having multiple permitted FQScopes.
+%
+% Return true if required FQScopes is verified at least from one
+% of the permitted FQScopes.
+% @end
+-spec verify_any(fqscopes(), list(fqscopes())) -> boolean().
+verify_any(RequiredFQScopes, ListPermittedFQScopes) ->
+  lists:any(fun(PermittedFQScopes) ->
+      verify(RequiredFQScopes, PermittedFQScopes)
+    end, ListPermittedFQScopes).
 
 -spec verify(fqscopes(), fqscopes()) -> boolean().
 verify(RequiredFQScopes, PermittedFQScopes) ->
