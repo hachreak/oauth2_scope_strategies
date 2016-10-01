@@ -63,13 +63,11 @@
 
 -module(oauth2_scope_strategy_fq).
 
--behaviour(oauth2_scope_strategy).
-
-%% Behaviour API exports
--export([verify_scope/2]).
+%% API exports
+-export([verify_scope/2, reduce/2]).
 
 %% API
--export([explode/1, implode/1, build/2, reduce/2]).
+-export([explode/1, implode/1, build/2]).
 
 -ifdef(TEST).
 -compile(export_all).

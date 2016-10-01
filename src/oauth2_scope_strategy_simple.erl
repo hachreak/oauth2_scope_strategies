@@ -23,11 +23,8 @@
 
 -behaviour(oauth2_scope_strategy).
 
-%% Behaviour API exports
--export([verify_scope/2]).
-
-%% API
--export([reduce/2]).
+%% API exports
+-export([verify_scope/2, reduce/2]).
 
 %% Types
 
