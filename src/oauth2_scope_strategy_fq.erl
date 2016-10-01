@@ -37,7 +37,7 @@
 %%%
 %%%   The check will be:
 %%%
-%%%     case verify_scope(
+%%%     case verify(
 %%%         [{<<"write">>, <<"boxes.fuu">>}], [<<"all.boxes.fuu">>]) of
 %%%       true  -> io:print("Write permitted");
 %%%       false -> io:print("Permission denied!")
@@ -49,13 +49,13 @@
 %%% of required scopes.
 %%%
 %%% E.g.
-%%%    true = verify_scope(
+%%%    true = verify(
 %%%      [{<<"write">>, <<"boxes.1">>}, {<<"write">>, <<"boxes.2">>}],
 %%%      [{<<"write">>, <<"boxes.1">>}, {<<"write">>, <<"boxes.2">>},
 %%%       {<<"write">>, <<"boxes.3">>}]).
 %%%
 %%% or:
-%%%    true = verify_scope(
+%%%    true = verify(
 %%%      [{<<"write">>, <<"boxes.1">>}, {<<"write">>, <<"boxes.2">>}],
 %%%      [{<<"write">>, <<"boxes">>}]).
 %%%
@@ -64,7 +64,7 @@
 -module(oauth2_scope_strategy_fq).
 
 %% API exports
--export([verify_scope/2, reduce/2]).
+-export([verify/2, reduce/2]).
 
 %% API
 -export([explode/1, implode/1, build/2]).
@@ -89,8 +89,8 @@
 %% API functions
 %%====================================================================
 
--spec verify_scope(fqscopes(), fqscopes()) -> boolean().
-verify_scope(RequiredFQScopes, PermittedFQScopes) ->
+-spec verify(fqscopes(), fqscopes()) -> boolean().
+verify(RequiredFQScopes, PermittedFQScopes) ->
   lists:all(fun(RequiredFQScope) ->
                 check_fqscope(RequiredFQScope, PermittedFQScopes)
             end, RequiredFQScopes).
@@ -145,7 +145,7 @@ check_fqscope({RequiredAction, RequiredScope}, PermittedFQScopes) ->
   lists:any(fun({PermittedAction, PermittedScope}) ->
       action_is_permitted(PermittedAction, RequiredAction)
       and
-      oauth2_scope_strategy_simple:verify_scope(RequiredScope, PermittedScope)
+      oauth2_scope_strategy_simple:verify(RequiredScope, PermittedScope)
     end, PermittedFQScopes).
 
 -spec action_is_permitted(action(), action()) -> boolean().

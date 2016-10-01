@@ -30,7 +30,7 @@ mux_test_() ->
     fun stop/1,
     fun (SetupData) ->
         [
-         verify_scope(SetupData),
+         verify(SetupData),
          reduce(SetupData)
         ]
     end
@@ -42,27 +42,27 @@ start() ->
 stop(_Pid) ->
   ok.
 
-verify_scope(_) ->
+verify(_) ->
   fun() ->
       ?assertEqual(
          true,
-         oauth2_scope_strategy_simple:verify_scope(
+         oauth2_scope_strategy_simple:verify(
            <<"users.pippo.boxes.1">>, <<"users.pippo.boxes">>)),
       ?assertEqual(
          false,
-         oauth2_scope_strategy_simple:verify_scope(
+         oauth2_scope_strategy_simple:verify(
            <<"users.pippo.boxes">>, <<"users.pippo.boxes.1">>)),
       ?assertEqual(
          false,
-         oauth2_scope_strategy_simple:verify_scope(
+         oauth2_scope_strategy_simple:verify(
            <<"users.pippo.boxes">>, <<"users.pippo.client">>)),
       ?assertEqual(
          true,
-         oauth2_scope_strategy_simple:verify_scope(
+         oauth2_scope_strategy_simple:verify(
            <<"users.pippo.boxes">>, undefined)),
       ?assertEqual(
          true,
-         oauth2_scope_strategy_simple:verify_scope(
+         oauth2_scope_strategy_simple:verify(
            <<"users.pippo.boxes">>, []))
 
   end.

@@ -24,7 +24,7 @@
 -behaviour(oauth2_scope_strategy).
 
 %% API exports
--export([verify_scope/2, reduce/2]).
+-export([verify/2, reduce/2]).
 
 %% Types
 
@@ -34,21 +34,21 @@
 %% API functions
 %%====================================================================
 
--spec verify_scope(scope(), scope()) -> boolean().
-verify_scope(_Scope1, undefined) -> true;
-verify_scope(_Scope1, []) -> true;
-verify_scope(RequiredScope, PermittedScope) ->
+-spec verify(scope(), scope()) -> boolean().
+verify(_Scope1, undefined) -> true;
+verify(_Scope1, []) -> true;
+verify(RequiredScope, PermittedScope) ->
   oauth2_priv_set:is_subset(
     oauth2_priv_set:new(PermittedScope),
     oauth2_priv_set:new(RequiredScope)).
 
 -spec reduce(scope(), scope()) -> {true, scope()} | false.
 reduce(RequiredScope, PermittedScope) ->
-  case oauth2_scope_strategy_simple:verify_scope(
+  case oauth2_scope_strategy_simple:verify(
          RequiredScope, PermittedScope) of
     true -> {true, RequiredScope};
     false ->
-      case oauth2_scope_strategy_simple:verify_scope(
+      case oauth2_scope_strategy_simple:verify(
              PermittedScope, RequiredScope) of
         true -> {true, PermittedScope};
         false -> false

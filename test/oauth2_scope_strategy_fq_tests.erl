@@ -281,6 +281,6 @@ reduce(_) ->
 check_scope(RequiredScope, PermittedScope, ResultExpected) ->
   ?assertEqual(
      ResultExpected,
-     oauth2_scope_strategy_fq:verify_scope(
+     oauth2_scope_strategy_fq:verify(
        RequiredScope,
        oauth2_scope_strategy_fq:explode(PermittedScope))).
