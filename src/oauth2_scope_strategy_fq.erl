@@ -69,7 +69,7 @@
 -export([verify_scope/2]).
 
 %% API
--export([explode/1, implode/1, build/2]).
+-export([explode/1, implode/1, build/2, reduce/2]).
 
 -ifdef(TEST).
 -compile(export_all).
@@ -119,7 +119,28 @@ implode([{Action, Scope} | Rest]) ->
 -spec build(action(), scope()) -> fqscopes().
 build(Action, Scope) -> [{Action, Scope}].
 
+-spec reduce(fqscope(), fqscope()) -> {true, fqscope()} | false.
+reduce(RequiredFQScope, PermittedFQScope) ->
+  try
+    {RequiredAction, RequiredScope} = RequiredFQScope,
+    {PermittedAction, PermittedScope} = PermittedFQScope,
+    MinimumAction = minimum_action(RequiredAction, PermittedAction),
+    case oauth2_scope_strategy_simple:reduce(
+                     RequiredScope, PermittedScope) of
+      false -> false;
+      {true, MinimumScope} -> {true, {MinimumAction, MinimumScope}}
+    end
+  catch
+    incompatible_actions -> false
+  end.
+
 %% Private functions
+
+-spec minimum_action(action(), action()) -> action() | no_return().
+minimum_action(<<"all">>, Action) -> Action;
+minimum_action(Action, <<"all">>) -> Action;
+minimum_action(Action, Action) -> Action;
+minimum_action(_, _) -> throw(incompatible_actions).
 
 -spec check_fqscope(fqscope(), fqscopes()) -> boolean().
 check_fqscope({RequiredAction, RequiredScope}, PermittedFQScopes) ->

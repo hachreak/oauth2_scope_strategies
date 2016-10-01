@@ -30,7 +30,8 @@ mux_test_() ->
     fun stop/1,
     fun (SetupData) ->
         [
-         verify_scope(SetupData)
+         verify_scope(SetupData),
+         reduce(SetupData)
         ]
     end
   }.
@@ -64,4 +65,54 @@ verify_scope(_) ->
          oauth2_scope_strategy_simple:verify_scope(
            <<"users.pippo.boxes">>, []))
 
+  end.
+
+reduce(_) ->
+  fun() ->
+    ?assertEqual(false, oauth2_scope_strategy_simple:reduce(
+        <<"users.pippo.boxes">>,
+        <<"users.pippo.clients">>
+      )),
+    ?assertEqual(
+       {true, <<"users.pippo.boxes">>},
+       oauth2_scope_strategy_simple:reduce(
+         <<"users.pippo.boxes">>,
+         <<"users.pippo.boxes">>
+        )),
+    ?assertEqual(
+       {true, <<"users.pippo.boxes.1">>},
+       oauth2_scope_strategy_simple:reduce(
+         <<"users.pippo.boxes">>,
+         <<"users.pippo.boxes.1">>
+        )),
+    ?assertEqual(
+       {true, <<"users.pippo.boxes.1">>},
+       oauth2_scope_strategy_simple:reduce(
+         <<"users.pippo.boxes.1">>,
+         <<"users.pippo.boxes">>
+        )),
+    ?assertEqual(
+       {true, <<"users.pippo.boxes.1">>},
+       oauth2_scope_strategy_simple:reduce(
+         <<"users.pippo.boxes.1">>,
+         <<"users.pippo.boxes">>
+        )),
+    ?assertEqual(
+       {true, <<"users.pippo.boxes.1">>},
+       oauth2_scope_strategy_simple:reduce(
+         <<"users.pippo.boxes">>,
+         <<"users.pippo.boxes.1">>
+        )),
+    ?assertEqual(
+       {true, <<"users.pippo.boxes.1">>},
+       oauth2_scope_strategy_simple:reduce(
+         <<"users.pippo.boxes">>,
+         <<"users.pippo.boxes.1">>
+        )),
+    ?assertEqual(
+       {true, <<"users.pippo.boxes.1">>},
+       oauth2_scope_strategy_simple:reduce(
+         <<"users.pippo.boxes.1">>,
+         <<"users.pippo.boxes">>
+        ))
   end.

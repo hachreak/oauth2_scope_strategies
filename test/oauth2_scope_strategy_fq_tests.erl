@@ -35,7 +35,8 @@ mux_test_() ->
          explode(SetupData),
          is_method(SetupData),
          implode(SetupData),
-         build(SetupData)
+         build(SetupData),
+         reduce(SetupData)
         ]
     end
   }.
@@ -219,6 +220,61 @@ build(_) ->
        [{<<"read">>, <<"users.pippo.boxes">>}],
        oauth2_scope_strategy_fq:build(<<"read">>, <<"users.pippo.boxes">>))
   end.
+
+reduce(_) ->
+  fun() ->
+    ?assertEqual(false, oauth2_scope_strategy_fq:reduce(
+        {<<"read">>, <<"users.pippo.boxes">>},
+        {<<"read">>, <<"users.pippo.clients">>}
+      )),
+    ?assertEqual(false, oauth2_scope_strategy_fq:reduce(
+        {<<"read">>, <<"users.pippo.boxes">>},
+        {<<"write">>, <<"users.pippo.boxes">>}
+      )),
+    ?assertEqual(
+       {true, {<<"read">>, <<"users.pippo.boxes.1">>}},
+       oauth2_scope_strategy_fq:reduce(
+         {<<"read">>, <<"users.pippo.boxes">>},
+         {<<"read">>, <<"users.pippo.boxes.1">>}
+        )),
+    ?assertEqual(
+       {true, {<<"read">>, <<"users.pippo.boxes.1">>}},
+       oauth2_scope_strategy_fq:reduce(
+        {<<"read">>, <<"users.pippo.boxes.1">>},
+        {<<"read">>, <<"users.pippo.boxes">>}
+      )),
+    ?assertEqual(
+       false,
+       oauth2_scope_strategy_fq:reduce(
+        {<<"read">>, <<"users.pippo.boxes.1">>},
+        {<<"write">>, <<"users.pippo.boxes">>}
+      )),
+    ?assertEqual(
+       {true, {<<"read">>, <<"users.pippo.boxes.1">>}},
+       oauth2_scope_strategy_fq:reduce(
+        {<<"read">>, <<"users.pippo.boxes.1">>},
+        {<<"read">>, <<"users.pippo.boxes">>}
+      )),
+    ?assertEqual(
+       {true, {<<"read">>, <<"users.pippo.boxes.1">>}},
+       oauth2_scope_strategy_fq:reduce(
+        {<<"read">>, <<"users.pippo.boxes">>},
+        {<<"all">>, <<"users.pippo.boxes.1">>}
+      )),
+    ?assertEqual(
+       {true, {<<"write">>, <<"users.pippo.boxes.1">>}},
+       oauth2_scope_strategy_fq:reduce(
+        {<<"all">>, <<"users.pippo.boxes">>},
+        {<<"write">>, <<"users.pippo.boxes.1">>}
+      )),
+    ?assertEqual(
+       {true, {<<"write">>, <<"users.pippo.boxes.1">>}},
+       oauth2_scope_strategy_fq:reduce(
+        {<<"all">>, <<"users.pippo.boxes.1">>},
+        {<<"write">>, <<"users.pippo.boxes">>}
+      ))
+  end.
+
 
 %% private functions
 

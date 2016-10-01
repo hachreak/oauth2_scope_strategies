@@ -23,8 +23,13 @@
 
 -behaviour(oauth2_scope_strategy).
 
-%% API exports
+%% Behaviour API exports
 -export([verify_scope/2]).
+
+%% API
+-export([reduce/2]).
+
+%% Types
 
 -type scope() :: oauth2:scope().
 
@@ -39,3 +44,16 @@ verify_scope(RequiredScope, PermittedScope) ->
   oauth2_priv_set:is_subset(
     oauth2_priv_set:new(PermittedScope),
     oauth2_priv_set:new(RequiredScope)).
+
+-spec reduce(scope(), scope()) -> {true, scope()} | false.
+reduce(RequiredScope, PermittedScope) ->
+  case oauth2_scope_strategy_simple:verify_scope(
+         RequiredScope, PermittedScope) of
+    true -> {true, RequiredScope};
+    false ->
+      case oauth2_scope_strategy_simple:verify_scope(
+             PermittedScope, RequiredScope) of
+        true -> {true, PermittedScope};
+        false -> false
+      end
+  end.
