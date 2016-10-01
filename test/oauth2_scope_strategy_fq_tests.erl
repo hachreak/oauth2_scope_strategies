@@ -52,6 +52,13 @@ verify_scope_test(_SetupData) ->
   fun() ->
       check_scope(
         % I want to access to:
+        undefined,
+        % but I can access only to
+        [<<"read.users.test.boxes">>],
+        % result
+        false),
+      check_scope(
+        % I want to access to:
         [{<<"read">>, <<"users.test">>}],
         % but I can access only to
         [<<"read.users.test.boxes">>],

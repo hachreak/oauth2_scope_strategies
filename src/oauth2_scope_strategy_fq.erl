@@ -100,7 +100,8 @@ verify_any(RequiredFQScopes, ListPermittedFQScopes) ->
       verify(RequiredFQScopes, PermittedFQScopes)
     end, ListPermittedFQScopes).
 
--spec verify(fqscopes(), fqscopes()) -> boolean().
+-spec verify(fqscopes() | undefined, fqscopes()) -> boolean().
+verify(undefined, _) -> false;
 verify(RequiredFQScopes, PermittedFQScopes) ->
   lists:all(fun(RequiredFQScope) ->
                 check_fqscope(RequiredFQScope, PermittedFQScopes)
