@@ -21,8 +21,6 @@
 
 -module(oauth2_scope_strategy_simple).
 
--behaviour(oauth2_scope_strategy).
-
 %% API exports
 -export([verify/2, reduce/2]).
 
