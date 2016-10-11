@@ -78,7 +78,7 @@
 -export_type([action/0, fqscope/0, fqscopes/0]).
 
 -type single_scope()  :: oauth2_scope_strategies:single_scope().
--type scope()         :: oauth2:scope().
+-type scope()         :: oauth2_scope_strategies:scope().
 -type action()        :: binary().
 % fully qualified scope (action + scope)
 -type fqscope()       :: {action(), single_scope()}.

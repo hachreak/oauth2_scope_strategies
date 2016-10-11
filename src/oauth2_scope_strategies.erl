@@ -3,7 +3,10 @@
 %% API exports
 -export([set_subpath/2, set_subpath/3]).
 
+-export_type([single_scope/0, scope/0]).
+
 -type single_scope()  :: binary().
+-type scope() :: list(single_scope()).
 
 %%====================================================================
 %% API functions

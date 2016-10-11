@@ -26,7 +26,7 @@
 
 %% Types
 
--type scope() :: oauth2:scope().
+-type scope() :: oauth2_scope_strategies:scope().
 
 %%====================================================================
 %% API functions
