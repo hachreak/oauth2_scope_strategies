@@ -26,13 +26,17 @@
 
 %% Types
 
--type scope() :: oauth2_scope_strategies:scope().
+-export_type([single_scope/0]).
+
+-type single_scope()  :: oauth2_scope_strategies:single_scope().
 
 %%====================================================================
 %% API functions
 %%====================================================================
 
--spec verify(scope(), scope()) -> boolean().
+% @doc verify if RequiredScope is a subset of PermittedScope.
+% @end
+-spec verify(single_scope(), single_scope()) -> boolean().
 verify(_Scope1, undefined) -> true;
 verify(_Scope1, []) -> true;
 verify(RequiredScope, PermittedScope) ->
@@ -40,7 +44,9 @@ verify(RequiredScope, PermittedScope) ->
     oauth2_priv_set:new(PermittedScope),
     oauth2_priv_set:new(RequiredScope)).
 
--spec reduce(scope(), scope()) -> {true, scope()} | false.
+% @doc find the minimum set.
+% @end
+-spec reduce(single_scope(), single_scope()) -> {true, single_scope()} | false.
 reduce(RequiredScope, PermittedScope) ->
   case oauth2_scope_strategy_simple:verify(
          RequiredScope, PermittedScope) of
