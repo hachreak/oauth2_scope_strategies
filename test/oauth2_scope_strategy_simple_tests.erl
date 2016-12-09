@@ -31,7 +31,8 @@ mux_test_() ->
     fun (SetupData) ->
         [
          verify(SetupData),
-         reduce(SetupData)
+         reduce(SetupData),
+         expand(SetupData)
         ]
     end
   }.
@@ -115,4 +116,16 @@ reduce(_) ->
          <<"users.pippo.boxes.1">>,
          <<"users.pippo.boxes">>
         ))
+  end.
+
+expand(_) ->
+  fun() ->
+    Expected = [
+      <<"users.pippo.boxes.1">>,
+      <<"users.pippo.boxes">>,
+      <<"users.pippo">>,
+      <<"users">>
+    ],
+    SingleScope = <<"users.pippo.boxes.1">>,
+    ?assertEqual(Expected, oauth2_scope_strategy_simple:expand(SingleScope))
   end.

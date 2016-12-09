@@ -24,10 +24,12 @@
 %% API exports
 -export([verify/2, reduce/2]).
 
+-export([expand/1]).
 %% Types
 
 -export_type([single_scope/0]).
 
+-type scope()  :: oauth2_scope_strategies:scope().
 -type single_scope()  :: oauth2_scope_strategies:single_scope().
 
 %%====================================================================
@@ -58,3 +60,16 @@ reduce(RequiredScope, PermittedScope) ->
         false -> false
       end
   end.
+
+-spec expand(single_scope()) -> scope().
+expand(Scope) ->
+  Splitted = binary:split(Scope, <<".">>, [global]),
+  lists:foldl(fun(X, Result) ->
+      El = try
+            [First | _] = Result,
+            << First/binary, <<".">>/binary >>
+          catch
+            error:{badmatch, _} -> <<"">>
+          end,
+      [ << El/binary, X/binary >> | Result]
+    end, [], Splitted).

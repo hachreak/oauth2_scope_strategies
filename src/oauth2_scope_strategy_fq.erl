@@ -67,7 +67,7 @@
 -export([verify_any/2, verify/2, reduce/2]).
 
 %% API
--export([explode/1, implode/1, build/2]).
+-export([explode/1, implode/1, build/2, expand/1]).
 
 -ifdef(TEST).
 -compile(export_all).
@@ -126,7 +126,7 @@ implode([]) -> [];
 implode([{Action, Scope} | Rest]) ->
   [implode({Action, Scope}) | implode(Rest)].
 
--spec build(action(), scope()) -> fqscopes().
+-spec build(action(), single_scope()) -> fqscopes().
 build(Action, Scope) -> [{Action, Scope}].
 
 -spec reduce(fqscope(), fqscope()) -> {true, fqscope()} | false.
@@ -144,7 +144,23 @@ reduce(RequiredFQScope, PermittedFQScope) ->
     incompatible_actions -> false
   end.
 
+-spec expand(fqscopes()) -> fqscopes().
+expand(FQScopes) ->
+  ListOfList = lists:map(fun({Action, Scope}) ->
+      expand_fqscopes(Action, oauth2_scope_strategy_simple:expand(Scope))
+    end, FQScopes),
+  lists:merge(ListOfList).
+
 %% Private functions
+
+zip_fqscopes(Action, Scopes) ->
+  lists:zip(lists:duplicate(length(Scopes), Action), Scopes).
+
+expand_fqscopes(<<"all">>, Scopes) ->
+  zip_fqscopes(<<"all">>, Scopes);
+expand_fqscopes(Action, Scopes) ->
+  lists:merge(zip_fqscopes(<<"all">>, Scopes),
+              zip_fqscopes(Action, Scopes)).
 
 -spec minimum_action(action(), action()) -> action() | no_return().
 minimum_action(<<"all">>, Action) -> Action;

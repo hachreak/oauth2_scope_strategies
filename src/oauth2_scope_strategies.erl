@@ -5,8 +5,8 @@
 
 -export_type([single_scope/0, scope/0]).
 
+-type scope()         :: list(single_scope()).
 -type single_scope()  :: binary().
--type scope() :: list(single_scope()).
 
 %%====================================================================
 %% API functions

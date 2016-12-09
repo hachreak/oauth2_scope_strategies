@@ -37,7 +37,8 @@ mux_test_() ->
          implode(SetupData),
          build(SetupData),
          reduce(SetupData),
-         verify_any(SetupData)
+         verify_any(SetupData),
+         expand(SetupData)
         ]
     end
   }.
@@ -335,6 +336,57 @@ verify_any(_) ->
       true)
   end.
 
+expand(_) ->
+  fun() ->
+    Action1 = <<"all">>,
+    SingleScope1 = <<"users.pippo.boxes.1">>,
+    Expected1 = [
+      {<<"all">>,<<"users.pippo.boxes.1">>},
+      {<<"all">>,<<"users.pippo.boxes">>},
+      {<<"all">>,<<"users.pippo">>},
+      {<<"all">>,<<"users">>}
+    ],
+    ?assertEqual(
+       Expected1,
+       oauth2_scope_strategy_fq:expand([{Action1, SingleScope1}])),
+
+    Action2 = <<"read">>,
+    SingleScope2 = <<"users.pippo.boxes.1">>,
+    Expected2 = [
+      {<<"all">>,<<"users.pippo.boxes.1">>},
+      {<<"all">>,<<"users.pippo.boxes">>},
+      {<<"all">>,<<"users.pippo">>},
+      {<<"all">>,<<"users">>},
+      {<<"read">>,<<"users.pippo.boxes.1">>},
+      {<<"read">>,<<"users.pippo.boxes">>},
+      {<<"read">>,<<"users.pippo">>},
+      {<<"read">>,<<"users">>}
+    ],
+    ?assertEqual(
+       Expected2,
+       oauth2_scope_strategy_fq:expand([{Action2, SingleScope2}])),
+
+    Action3 = <<"write">>,
+    SingleScope3 = <<"users.pippo.boxes.1">>,
+    Expected3 = [
+      {<<"all">>,<<"users.pippo.boxes.1">>},
+      {<<"all">>,<<"users.pippo.boxes">>},
+      {<<"all">>,<<"users.pippo">>},
+      {<<"all">>,<<"users">>},
+      {<<"write">>,<<"users.pippo.boxes.1">>},
+      {<<"write">>,<<"users.pippo.boxes">>},
+      {<<"write">>,<<"users.pippo">>},
+      {<<"write">>,<<"users">>}
+    ],
+    ?assertEqual(
+       Expected3,
+       oauth2_scope_strategy_fq:expand([{Action3, SingleScope3}])),
+
+    Expected4 = lists:merge(Expected1, Expected2),
+    FQScopes4 = [{Action1, SingleScope1}, {Action2, SingleScope2}],
+    ?assertEqual(
+      Expected4, oauth2_scope_strategy_fq:expand(FQScopes4))
+  end.
 
 %% private functions
 
