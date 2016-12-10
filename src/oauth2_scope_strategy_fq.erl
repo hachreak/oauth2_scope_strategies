@@ -120,11 +120,9 @@ explode([FQScope | Rest]) ->
   [FQScopeExtracted | explode(Rest)].
 
 -spec implode(fqscope() | fqscopes()) -> scope().
-implode({Action, Scope}) ->
-  oauth2_scope_strategies:set_subpath(Action, Scope);
 implode([]) -> [];
 implode([{Action, Scope} | Rest]) ->
-  [implode({Action, Scope}) | implode(Rest)].
+  [implode_fqscope({Action, Scope}) | implode(Rest)].
 
 -spec build(action(), single_scope()) -> fqscopes().
 build(Action, Scope) -> [{Action, Scope}].
@@ -153,9 +151,15 @@ expand(FQScopes) ->
 
 %% Private functions
 
+-spec implode_fqscope(fqscope()) -> single_scope().
+implode_fqscope({Action, Scope}) ->
+  oauth2_scope_strategies:set_subpath(Action, Scope).
+
+-spec zip_fqscopes(action(), scope()) -> fqscopes().
 zip_fqscopes(Action, Scopes) ->
   lists:zip(lists:duplicate(length(Scopes), Action), Scopes).
 
+-spec expand_fqscopes(action(), scope()) -> fqscopes().
 expand_fqscopes(<<"all">>, Scopes) ->
   zip_fqscopes(<<"all">>, Scopes);
 expand_fqscopes(Action, Scopes) ->

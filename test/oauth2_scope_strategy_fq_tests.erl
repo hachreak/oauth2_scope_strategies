@@ -208,10 +208,6 @@ is_method(_) ->
 implode(_) ->
   fun() ->
       ?assertEqual(
-         <<"read.users.pippo.boxes">>,
-         oauth2_scope_strategy_fq:implode(
-           {<<"read">>, <<"users.pippo.boxes">>})),
-      ?assertEqual(
         [<<"read.users.pippo.boxes">>],
         oauth2_scope_strategy_fq:implode(
           [{<<"read">>, <<"users.pippo.boxes">>}])),
