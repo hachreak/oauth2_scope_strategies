@@ -381,7 +381,21 @@ expand(_) ->
     Expected4 = lists:merge(Expected1, Expected2),
     FQScopes4 = [{Action1, SingleScope1}, {Action2, SingleScope2}],
     ?assertEqual(
-      Expected4, oauth2_scope_strategy_fq:expand(FQScopes4))
+      Expected4, oauth2_scope_strategy_fq:expand(FQScopes4)),
+
+    Action5 = <<"read">>,
+    SingleScope5 = <<"users.*.boxes.1">>,
+    Expected5 = [
+      {<<"all">>,<<"users.*.boxes.1">>},
+      {<<"all">>,<<"users.*.boxes">>},
+      {<<"all">>,<<"users">>},
+      {<<"read">>,<<"users.*.boxes.1">>},
+      {<<"read">>,<<"users.*.boxes">>},
+      {<<"read">>,<<"users">>}
+    ],
+    ?assertEqual(
+       Expected5,
+       oauth2_scope_strategy_fq:expand([{Action5, SingleScope5}]))
   end.
 
 %% private functions
