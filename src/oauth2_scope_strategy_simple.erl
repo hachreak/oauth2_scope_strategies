@@ -64,7 +64,7 @@ reduce(RequiredScope, PermittedScope) ->
 -spec expand(single_scope()) -> scope().
 expand(Scope) ->
   Splitted = binary:split(Scope, <<".">>, [global]),
-  Expanded = lists:foldl(fun(X, Result) ->
+  lists:foldl(fun(X, Result) ->
       El = try
             [First | _] = Result,
             << First/binary, <<".">>/binary >>
@@ -72,18 +72,17 @@ expand(Scope) ->
             error:{badmatch, _} -> <<"">>
           end,
       [ << El/binary, X/binary >> | Result]
-    end, [], Splitted),
-  exclude_wild_scope(Expanded).
+    end, [], Splitted).
 
 %% private functions
 
--spec exclude_wild_scope(scope()) -> scope().
-exclude_wild_scope(Scope) ->
-  lists:filtermap(fun(SingleScope) ->
-      filter_wild_scope(binary:last(SingleScope), SingleScope)
-    end, Scope).
+% -spec exclude_wild_scope(scope()) -> scope().
+% exclude_wild_scope(Scope) ->
+%   lists:filtermap(fun(SingleScope) ->
+%       filter_wild_scope(binary:last(SingleScope), SingleScope)
+%     end, Scope).
 
--spec filter_wild_scope(byte(), single_scope()) ->
-    {true, single_scope()} | false.
-filter_wild_scope(42, _) -> false;
-filter_wild_scope(_, SingleScope) -> {true, SingleScope}.
+% -spec filter_wild_scope(byte(), single_scope()) ->
+%     {true, single_scope()} | false.
+% filter_wild_scope(42, _) -> false;
+% filter_wild_scope(_, SingleScope) -> {true, SingleScope}.

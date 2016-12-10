@@ -127,13 +127,13 @@ expand(_) ->
       <<"users">>
     ],
     SingleScope = <<"users.pippo.boxes.1">>,
-    ?assertEqual(Expected, oauth2_scope_strategy_simple:expand(SingleScope)),
+    ?assertEqual(Expected, oauth2_scope_strategy_simple:expand(SingleScope))
 
-    Expected2 = [
-      <<"users.*.boxes.1">>,
-      <<"users.*.boxes">>,
-      <<"users">>
-    ],
-    SingleScope2 = <<"users.*.boxes.1">>,
-    ?assertEqual(Expected2, oauth2_scope_strategy_simple:expand(SingleScope2))
+  %   Expected2 = [
+  %     <<"users.*.boxes.1">>,
+  %     <<"users.*.boxes">>,
+  %     <<"users">>
+  %   ],
+  %   SingleScope2 = <<"users.*.boxes.1">>,
+  %   ?assertEqual(Expected2, oauth2_scope_strategy_simple:expand(SingleScope2))
   end.
