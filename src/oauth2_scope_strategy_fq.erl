@@ -67,7 +67,7 @@
 -export([verify_any/2, verify/2, reduce/2]).
 
 %% API
--export([explode/1, implode/1, build/2, expand/1]).
+-export([explode/1, implode/1, build/2, expand/1, action_is_permitted/2]).
 
 -ifdef(TEST).
 -compile(export_all).
