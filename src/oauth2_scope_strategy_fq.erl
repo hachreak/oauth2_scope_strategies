@@ -68,7 +68,7 @@
 
 %% API
 -export([explode/1, implode/1, build/2, expand/1, action_is_permitted/2,
-         is_subset/2]).
+         is_subset/2, subsets/2]).
 
 -ifdef(TEST).
 -compile(export_all).
@@ -181,6 +181,17 @@ is_subset({RequiredAction, RequiredScope},
             end, lists:zip(SubsetReq, SplitPermittedScope))
       end
   end.
+
+% @doc Get a list of permitted scopes that are subsets of required scope.
+% @end
+-spec subsets(fqscope(), fqscopes()) -> fqscopes().
+subsets(RequiredFQScope, PermittedFQScopes) ->
+  lists:filtermap(fun(PermittedFQScope) ->
+      case is_subset(RequiredFQScope, PermittedFQScope) of
+        false -> false;
+        true -> {true, PermittedFQScope}
+      end
+    end, PermittedFQScopes).
 
 %% Private functions
 

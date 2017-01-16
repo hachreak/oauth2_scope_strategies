@@ -419,6 +419,21 @@ is_subset_test() ->
   ?assertEqual(true, oauth2_scope_strategy_fq:is_subset(
             RequiredFQScope, {<<"read">>, <<"users.pippo.boxes">>})).
 
+subsets_test() ->
+  RequiredFQScope = {<<"read">>, <<"users.*.boxes.*">>},
+  ?assertEqual([{<<"read">>, <<"users.pippo">>}],
+               oauth2_scope_strategy_fq:subsets(
+            RequiredFQScope, [{<<"read">>, <<"users.pippo">>},
+                              {<<"write">>, <<"users.pippo">>}])),
+  ?assertEqual([{<<"all">>, <<"users.pippo">>}],
+               oauth2_scope_strategy_fq:subsets(
+            RequiredFQScope, [{<<"all">>, <<"users.pippo">>},
+                              {<<"write">>, <<"users.pippo">>}])),
+  ?assertEqual([],
+               oauth2_scope_strategy_fq:subsets(
+            RequiredFQScope, [{<<"write">>, <<"users.pippo">>},
+                              {<<"read">>, <<"users.pippo.boards">>}])).
+
 %% private functions
 
 check_scope(RequiredScope, PermittedScope, ResultExpected) ->
