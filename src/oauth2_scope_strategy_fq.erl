@@ -175,15 +175,15 @@ minimum_action(_, _) -> throw(incompatible_actions).
 -spec check_fqscope(fqscope(), fqscopes()) -> boolean().
 check_fqscope({RequiredAction, RequiredScope}, PermittedFQScopes) ->
   lists:any(fun({PermittedAction, PermittedScope}) ->
-      action_is_permitted(PermittedAction, RequiredAction)
+      action_is_permitted(RequiredAction, PermittedAction)
       and
       oauth2_scope_strategy_simple:verify(RequiredScope, PermittedScope)
     end, PermittedFQScopes).
 
 -spec action_is_permitted(action(), action()) -> boolean().
 action_is_permitted(Action, Action) -> true;
-action_is_permitted(<<"all">>, _RequiredAction) -> true;
-action_is_permitted(_PermittedAction, _RequiredAction) -> false.
+action_is_permitted(_RequiredAction, <<"all">>) -> true;
+action_is_permitted(_RequiredAction, _PermittedAction) -> false.
 
 -spec is_method(binary()) -> boolean().
 is_method(<<"read">>) -> true;

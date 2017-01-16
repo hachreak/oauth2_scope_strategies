@@ -169,7 +169,7 @@ action_is_permitted(_) ->
        oauth2_scope_strategy_fq:action_is_permitted(
          <<"read">>, <<"write">>)),
     ?assertEqual(
-       false,
+       true,
        oauth2_scope_strategy_fq:action_is_permitted(
          <<"read">>, <<"all">>)),
     ?assertEqual(
@@ -177,7 +177,7 @@ action_is_permitted(_) ->
        oauth2_scope_strategy_fq:action_is_permitted(
          <<"all">>, <<"all">>)),
     ?assertEqual(
-       true,
+       false,
        oauth2_scope_strategy_fq:action_is_permitted(
          <<"all">>, <<"write">>))
   end.
