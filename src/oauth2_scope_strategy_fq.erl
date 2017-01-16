@@ -67,7 +67,8 @@
 -export([verify_any/2, verify/2, reduce/2]).
 
 %% API
--export([explode/1, implode/1, build/2, expand/1, action_is_permitted/2]).
+-export([explode/1, implode/1, build/2, expand/1, action_is_permitted/2,
+         is_subset/2]).
 
 -ifdef(TEST).
 -compile(export_all).
@@ -148,6 +149,38 @@ expand(FQScopes) ->
       expand_fqscopes(Action, oauth2_scope_strategy_simple:expand(Scope))
     end, FQScopes),
   lists:merge(ListOfList).
+
+% @doc Check if required scope is a subset of permitted.
+%   E.g. required:   read,  users.*.boxes.*
+%        permitted:  read,  users.pippo              -> true
+%                    write, users.pippo              -> false
+%                    read,  users.pippo.boxes        -> true
+%                    read,  users.pippo.boxes.1      -> true
+%                    write, users.pippo.boxes.1      -> false
+%                    read,  users.pippo.boxes.1.data -> false
+%                    read,  users.pippo.boards       -> false
+% @end
+%
+-spec is_subset(fqscope(), fqscope()) -> boolean().
+is_subset({RequiredAction, RequiredScope},
+          {PermittedAction, PermittedScope}) ->
+  case action_is_permitted(RequiredAction, PermittedAction) of
+    false -> false;
+    true ->
+      SplitRequiredScope = binary:split(RequiredScope, <<".">>, [global]),
+      SplitPermittedScope = binary:split(PermittedScope, <<".">>, [global]),
+      case length(SplitRequiredScope) >= length(SplitPermittedScope) of
+        false -> false;
+        true ->
+          SubsetReq = lists:sublist(SplitRequiredScope,
+                                    length(SplitPermittedScope)),
+          lists:all(
+              fun({Piece, Piece}) -> true;
+                 ({<<"*">>, _}) -> true;
+                 ({_Req, _Perm}) -> false
+            end, lists:zip(SubsetReq, SplitPermittedScope))
+      end
+  end.
 
 %% Private functions
 

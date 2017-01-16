@@ -398,6 +398,27 @@ expand(_) ->
     %    oauth2_scope_strategy_fq:expand([{Action5, SingleScope5}]))
   end.
 
+is_subset_test() ->
+  RequiredFQScope = {<<"read">>, <<"users.*.boxes.*">>},
+  ?assertEqual(true, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"read">>, <<"users.pippo">>})),
+  ?assertEqual(false, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"write">>, <<"users.pippo">>})),
+  ?assertEqual(true, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"read">>, <<"users.pippo.boxes">>})),
+  ?assertEqual(true, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"read">>, <<"users.pippo.boxes.1">>})),
+  ?assertEqual(false, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"write">>, <<"users.pippo.boxes.1">>})),
+  ?assertEqual(false, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"read">>, <<"users.pippo.boxes.1.data">>})),
+  ?assertEqual(false, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"read">>, <<"users.pippo.boards">>})),
+  ?assertEqual(true, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"all">>, <<"users.pippo.boxes">>})),
+  ?assertEqual(true, oauth2_scope_strategy_fq:is_subset(
+            RequiredFQScope, {<<"read">>, <<"users.pippo.boxes">>})).
+
 %% private functions
 
 check_scope(RequiredScope, PermittedScope, ResultExpected) ->
